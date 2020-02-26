@@ -10,38 +10,38 @@ songplay_table_drop = "drop table if exists songplays"
 
 songplay_table_create = ("""
     create table if not exists songplays(
-        id serial primary key, 
-        user_id int references users(id), 
-        song_id int references songs(id), 
-        artist_id int references artists(id), 
+        songplay_id serial primary key, 
+        user_id int references users(user_id), 
+        song_id varchar references songs(song_id), 
+        artist_id varchar references artists(artist_id), 
         start_time timestamp references time(start_time), 
         session_id int, 
-        level int, 
+        level varchar, 
         location varchar, 
         user_agent varchar
     )""")
 
 user_table_create = ("""
     create table if not exists users(
-        id serial primary key, 
+        user_id int primary key, 
         first_name varchar, 
         last_name varchar, 
         gender varchar, 
-        level int
+        level varchar
     )""")
 
 song_table_create = ("""
     create table if not exists songs(
-        id serial primary key, 
+        song_id varchar primary key, 
         title varchar, 
-        artist_id int, 
+        artist_id varchar, 
         year int, 
-        duration int
+        duration numeric
     )""")
 
 artist_table_create = ("""
     create table if not exists artists(
-        id serial primary key, 
+        artist_id varchar primary key, 
         name varchar, 
         location varchar, 
         latitude numeric, 
@@ -63,19 +63,29 @@ time_table_create = ("""
 # INSERT RECORDS
 
 songplay_table_insert = ("""
+    insert into songplays(songplay_id, user_id, song_id, artist_id, start_time, session_id, level, location, user_agent) 
+    values(%s, %s, %s, %s, %s, %s, %s, %s, %s)
 """)
 
 user_table_insert = ("""
+    insert into users(user_id, first_name, last_name, gender, level) 
+    values(%s, %s, %s, %s, %s)
 """)
 
 song_table_insert = ("""
+    insert into songs(song_id, title, artist_id, year, duration) 
+    values(%s, %s, %s, %s, %s)
 """)
 
 artist_table_insert = ("""
+    insert into artists(artist_id, name, location, latitude, longitude) 
+    values(%s, %s, %s, %s, %s)
 """)
 
 
 time_table_insert = ("""
+    insert into time(start_time, hour, day, week, month, year, weekday) 
+    values(%s, %s, %s, %s, %s, %s, %s)
 """)
 
 # FIND SONGS
