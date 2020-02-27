@@ -15,8 +15,59 @@ The purpose of this project is to empower an analytics team of a music streaming
 * `sql_queries.py` contains all your sql queries, and is imported into the last three files above.
 
 
-[WIP] Discuss the purpose of this database in the context of the startup, Sparkify, and their analytical goals.
+## Executing ETL process
 
-[WIP] State and justify your database schema design and ETL pipeline.
+The scripts expect a PostgreSQL database running on localhost with a database called `studentdb` with credentials `user=student password=student`.
 
-[WIP] Provide example queries and results for song play analysis.
+1. The first step is to run `create_tables.py` to setup the database environment.
+2. Next, run `etl.py` to read data from folders **song_data** and **log_data** and write the data to the database.
+
+## Discussion
+
+Since the startup Sparkify currently does not have a database to run analytical queries on and gather insight from user activity, it is imperative that such a database is built to enable them to explore what their users consume and what they don't, creating a possibility to choose on what products to invest on based on their data.
+
+With analytical queries in mind, the star schema was chosen as the appropriate model to hold the data in a read-opmized way, making it easier for analysts to build queries without demanding too much processing from the database.
+
+## Example queries
+
+Since the song data provided does not have a matching song and artist record with the log data provided, the following queries with song or artist information return no results. But for the sake of practical examples, here are some queries that could bring relevant insight to the analysts:
+
+### Most popular weekday on Sparkify
+
+```sql
+select count(sp.songplay_id) as song_count, t.weekday
+from songplays sp
+join time t on sp.start_time = t.start_time
+group by t.weekday
+order by 1 desc
+```
+
+### Evolution of the app usage during the day
+
+```sql
+select count(sp.songplay_id) as song_count, t.hour
+from songplays sp
+join time t on sp.start_time = t.start_time
+group by t.hour
+order by t.hour
+```
+
+### Top listened songs all time
+
+```sql
+select count(*) song_count, s.title, a."name"
+from songplays sp
+join songs s on sp.song_id = s.song_id
+join artists a on sp.artist_id = a.artist_id
+group by s.title, a."name"
+order by 1 desc
+```
+
+### Locations the app is most used on
+
+```sql
+select count(*), "location"
+from songplays sp
+group by "location"
+order by 1 desc
+```
